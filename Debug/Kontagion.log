@@ -1,21 +1,9 @@
 ﻿  Actor.cpp
 C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.h(28,19): warning C4150: deletion of pointer to incomplete type 'StudentWorld'; no destructor called
 C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.h(6): message : see declaration of 'StudentWorld'
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(265,17): warning C4244: 'initializing': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(396,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  StudentWorld.cpp
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.h(28,19): warning C4150: deletion of pointer to incomplete type 'StudentWorld'; no destructor called
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.h(6): message : see declaration of 'StudentWorld'
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(39,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(47,19): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(74,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(84,24): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(84,48): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(113,19): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(114,19): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(129,22): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(152,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(170,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(190,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  Generating Code...
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(266,17): warning C4244: 'initializing': conversion from 'double' to 'Direction', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(397,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(419,36): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(420,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(424,26): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
   Kontagion.vcxproj -> C:\Users\miche\Downloads\Kontagion2\Kontagion\Debug\Kontagion.exe

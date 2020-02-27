@@ -1,5 +1,6 @@
 #include "Actor.h"
 #include "StudentWorld.h"
+#include<cmath>
 using namespace std;
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
@@ -341,7 +342,7 @@ Bacteria::Bacteria(const int id, double startX, double startY, StudentWorld* swp
 
 Salmonella::Salmonella(const int id, double startX, double startY, StudentWorld* swptr, int hp) :Bacteria(id, startX, startY, swptr, hp)
 {
-    mpd = 50;
+    mpd = 0;
     m_food = 0;
 }
 
@@ -398,12 +399,40 @@ void RegularSalmonella::doSomething()
         {
             moveTo(threeX, threeY);
         }
-    }
-    else
-    {
+        else
+        {
         Direction rand = randInt(0, 359);
         setDirection(rand);
         resetMPD();
+        return;
+        }
+    }
+    
+    else 
+    {
+        double foodX;
+        double foodY;
+        getWorld()->findClosestFood(getX(), getY(), foodX, foodY);
+
+        double threeX, threeY;
+        double angle = atan2(getX() - foodX, getY() - foodY);
+        getPositionInThisDirection(angle, 3, threeX, threeY);
+        int r = getWorld()->findEuclidean(threeX, threeY, VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
+
+        if (r < VIEW_RADIUS && !(getWorld()->isBacteriumMovementBlockedAt(this, threeX, threeY)))
+        {
+            setDirection(angle);
+            moveTo(threeX, threeY);
+        }
+        else
+        {
+            Direction rand = randInt(0, 359);
+            setDirection(rand);
+            resetMPD();
+            return;
+        }
+        
+    
     }
 }
 

@@ -130,6 +130,24 @@ public:
         }
         return false;
     }
+
+    void findClosestFood(double bacX, double bacY, double& foodX, double& foodY)
+    {
+        double max = 0.0;
+        std::list<Actor*>::iterator it = actors.begin();
+        for (; it != actors.end(); it++)
+        {
+            double x = (*it)->getX();
+            double y = (*it)->getY();
+            double current = (findEuclidean(x, y, bacX, bacY));
+            if (current > max)
+            {
+                max = current;
+                foodX = x;
+                foodY = y;
+            }
+        }
+    }
 private:
     Socrates* m_player;
     std::list<Actor*> actors;
