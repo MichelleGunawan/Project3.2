@@ -40,7 +40,7 @@ public:
 	//virtual void doSomething();
 	virtual bool isDamagable() { return true; }
 	virtual bool takeDamage(int) { setDead(); return true; }
-	virtual bool blocksBacteriumMovement() const {return true;}
+	virtual bool blocksBacteria() const {return true;}
 };
 
 class Food : public Actor
@@ -186,6 +186,7 @@ public:
 	int getMPD() { return mpd; }
 	void changeMPD(int c) { mpd += c; }
 	void resetMPD() { mpd = 10; }
+
 	int getFood() { return m_food; }
 	void changeFood(int c) { m_food += c; }
 	void resetFood() { m_food = 0; }

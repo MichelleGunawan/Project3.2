@@ -355,9 +355,9 @@ void RegularSalmonella::doSomething()
     {
         return;
     }
-    /*else if (isAlive())
+    else if (isAlive())
     {
-        if (getWorld()->overlapsSocrates(getX(), getY(), 1))
+        if (getWorld()->bacteriaOverlapsSocrates(getX(), getY(), 1))
         { }
         else if (getFood() == 3)
         {
@@ -383,9 +383,9 @@ void RegularSalmonella::doSomething()
             getWorld()->addActor(new RegularSalmonella(newX, newY, getWorld()));
             resetFood();
         }
-        if (getWorld()->getOverlappingEdible(this))
+        if (getWorld()->bacteriaOverlapsFood(getX(),getY()))
         {
-            Actor* food = getWorld()->getOverlappingEdible(this);
+            changeFood(1);
         }
     }
     if (getMPD() > 0)
@@ -394,7 +394,7 @@ void RegularSalmonella::doSomething()
         double threeX, threeY;
         getPositionInThisDirection(getDirection(), 3, threeX, threeY);
         int r = getWorld()->findEuclidean(threeX, threeY, VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
-        if (r < VIEW_RADIUS && getWorld()->isBacteriumMovementBlockedAt(this,threeX, threeY))
+        if (r < VIEW_RADIUS && !(getWorld()->isBacteriumMovementBlockedAt(this,threeX, threeY)))
         {
             moveTo(threeX, threeY);
         }
@@ -404,7 +404,7 @@ void RegularSalmonella::doSomething()
         Direction rand = randInt(0, 359);
         setDirection(rand);
         resetMPD();
-    }*/
+    }
 }
 
 AggressiveSalmonella::AggressiveSalmonella(double startX, double startY, StudentWorld* swptr) :Salmonella(IID_SALMONELLA, startX, startY, swptr, 4)

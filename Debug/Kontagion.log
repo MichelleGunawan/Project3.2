@@ -2,6 +2,7 @@
 C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.h(28,19): warning C4150: deletion of pointer to incomplete type 'StudentWorld'; no destructor called
 C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.h(6): message : see declaration of 'StudentWorld'
 C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(265,17): warning C4244: 'initializing': conversion from 'double' to 'Direction', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(396,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   StudentWorld.cpp
 C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.h(28,19): warning C4150: deletion of pointer to incomplete type 'StudentWorld'; no destructor called
 C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.h(6): message : see declaration of 'StudentWorld'

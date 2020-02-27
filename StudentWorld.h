@@ -21,6 +21,7 @@ public:
     virtual ~StudentWorld();
     double findEuclidean(double startX, double startY, double endX, double endY) const;
     bool checkAllowed(int startX, int startY);
+    void harmSocrates(int damage) { m_player->decHitPoints(damage); }
 
     // Add an actor to the world.
     void addActor(Actor* a);
@@ -99,18 +100,36 @@ public:
         return false;
     }
 
-    bool overlapsSocrates(double actorX, double actorY, int damage)
+    bool bacteriaOverlapsSocrates(double actorX, double actorY, int damage)
     {
         double socX = (m_player)->getX();
         double socY = (m_player)->getY();
         if (findEuclidean(actorX, actorY, socX, socY) <= (2 * SPRITE_RADIUS))
         {
-            m_player->takeDamage(damage);
+            harmSocrates(damage);
             return true;
         }
         return false;
     }
 
+    bool bacteriaOverlapsFood(double bacX, double bacY)
+    {
+        std::list<Actor*>::iterator it = actors.begin();
+        for (; it != actors.end(); it++)
+        {
+            double x = (*it)->getX();
+            double y = (*it)->getY();
+            if ((*it)->isEdible())
+            {
+                if (findEuclidean(x, y, bacX, bacY) <= (2 * SPRITE_RADIUS))
+                {
+                    (*it)->setDead();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 private:
     Socrates* m_player;
     std::list<Actor*> actors;
