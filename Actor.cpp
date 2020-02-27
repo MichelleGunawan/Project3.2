@@ -333,6 +333,13 @@ void Socrates::doSomething()
             }
             }
         }
+        else
+        {
+            if (m_sprayCharges < 20)
+            {
+                m_sprayCharges++;
+            }
+        }
     }
 }
 

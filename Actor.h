@@ -142,6 +142,7 @@ class Agent : public Actor
 {
 public:
 	Agent(const int id, double startX, double startY, StudentWorld* swptr, int hp, Direction dir = 0, int depth = 0, double size = 1.0);
+	virtual bool isAlive() { return m_hp > 0; }
 	virtual bool isDamagable() { return true; }
 	virtual bool isLiveDamagable() { return true; }
 	void decHitPoints(int damage) { m_hp -= damage; }

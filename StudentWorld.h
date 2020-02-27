@@ -148,6 +148,9 @@ public:
             }
         }
     }
+
+    void createGoodies();
+
 private:
     Socrates* m_player;
     std::list<Actor*> actors;
@@ -159,6 +162,8 @@ private:
     };
     std::vector<Coordinate> coords;
 };
+
+
 
 #endif // STUDENTWORLD_H_
 

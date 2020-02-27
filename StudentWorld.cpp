@@ -17,14 +17,14 @@ ostringstream oss;
 
 GameWorld* createStudentWorld(string assetPath)
 {
-	return new StudentWorld(assetPath);
+    return new StudentWorld(assetPath);
 }
 
 
 // Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
 
 StudentWorld::StudentWorld(string assetPath)
-: GameWorld(assetPath)
+    : GameWorld(assetPath)
 {
 }
 
@@ -76,7 +76,7 @@ bool StudentWorld::isBacteriumMovementBlockedAt(Actor* a, double x, double y) co
     {
         return true;
     }
-   list<Actor*>::const_iterator it = actors.begin();
+    list<Actor*>::const_iterator it = actors.begin();
     for (; it != actors.end(); it++)
     {
         if ((*it)->blocksBacteria())
@@ -126,7 +126,7 @@ bool StudentWorld::getAngleToNearbySocrates(Actor* a, int dist, int& angle) cons
     double socX = m_player->getX(), socY = m_player->getY();
     if (findEuclidean(socX, socY, a->getX(), a->getY()) <= dist)
     {
-        angle = atan2(socX-VIEW_WIDTH/2, socY-VIEW_HEIGHT/2);
+        angle = atan2(socX - VIEW_WIDTH / 2, socY - VIEW_HEIGHT / 2);
         return true;
     }
     return false;
@@ -208,17 +208,16 @@ int StudentWorld::move()
 {
     // this code is here merely to allow the game to build, run, and terminate after you hit enter.
     // notice that the return value gwstatus_player_died will cause our framework to end the current level.
-    
+
     /*int chanceFungus = min(510 - getLevel() * 10, 200);
     int rand = randInt(0, chanceFungus - 1);
     int randAngle = randInt(0, 359);
         if (rand == 0)
         {
             double x, y = 0;
-            m_player->getPositionInThisDirection(randAngle, VIEW_RADIUS, x, y); 
+            m_player->getPositionInThisDirection(randAngle, VIEW_RADIUS, x, y);
             actors.push_back(new Fungus(VIEW_WIDTH / 2 + x, VIEW_HEIGHT / 2 + y, this));
         }
-
      int chanceGoodie = min(510 - getLevel() * 10, 200);
      int rand2 = randInt(0, chanceGoodie - 1);
      int randAngle2 = randInt(0, 359);
@@ -244,14 +243,14 @@ int StudentWorld::move()
     {
         m_player->doSomething();
         list<Actor*>::iterator it = actors.begin();
-        for(;it != actors.end();)
+        for (; it != actors.end();)
         {
             if ((*it)->isAlive())
             {
                 (*it)->doSomething();
                 it++;
             }
-            else if(!(*it)->isAlive())
+            else if (!(*it)->isAlive())
             {
                 //delete (*it);
                 it = actors.erase(it);
@@ -262,9 +261,9 @@ int StudentWorld::move()
     {
         return GWSTATUS_PLAYER_DIED;
     }
-    
-    //string stats = "score: " + to_string(getscore()) + " level: " + to_string(getlevel()) + " lives: " + to_string(getlives()) + " health: " + to_string((*m_player).gethitpoints()) + " sprays: " + to_string(m_player->getsprays()) + " flames: " + to_string(m_player->getflames()); // +" size: " + to_string(actors.size());
-    //setgamestattext(stats);
+
+    string stats = "score: " + to_string(getScore()) + " level: " + to_string(getLevel()) + " lives: " + to_string(getLives()) + " health: " + to_string(m_player->getHitPoints()) + " sprays: " + to_string(m_player->getSprays()) + " flames: " + to_string(m_player->getFlames()); // +" size: " + to_string(actors.size());
+    setGameStatText(stats);
     return 1;
 }
 
@@ -283,4 +282,3 @@ StudentWorld::~StudentWorld()
 {
     cleanUp();
 }
-
