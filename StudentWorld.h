@@ -21,7 +21,6 @@ public:
     virtual ~StudentWorld();
     double findEuclidean(double startX, double startY, double endX, double endY) const;
     bool checkAllowed(int startX, int startY);
-    void harmSocrates(int damage) { m_player->decHitPoints(damage); }
 
     // Add an actor to the world.
     void addActor(Actor* a);
@@ -56,7 +55,7 @@ public:
     // where socrates and goodies are placed.)
     void getPositionOnCircumference(int angle, double& x, double& y) const;
 
-    Actor* overlapsProjectile(double projX, double projY)
+    /*Actor* overlapsProjectile(double projX, double projY)
     {
         std::list<Actor*>::iterator it = actors.begin();
         for(;it != actors.end();it++)
@@ -72,7 +71,7 @@ public:
             }
         }
         return nullptr;
-    }
+    }*/
 
     bool overlapsProjectile(double projX, double projY, int damage)
     {
@@ -87,7 +86,16 @@ public:
                 {
                     if ((*it)->isLiveDamagable())
                     {
-                        (*it)->decHitPoints(damage);
+                       (*it)->decHitPoints(damage);
+                       if ((*it)->isAlive())
+                       {
+                           (*it)->playHurt();
+                       }
+                        else
+                        {
+                            (*it)->setDead();
+                            (*it)->playDead();
+                        }
                     }
                     else
                     {
@@ -106,7 +114,11 @@ public:
         double socY = (m_player)->getY();
         if (findEuclidean(actorX, actorY, socX, socY) <= (2 * SPRITE_RADIUS))
         {
-            harmSocrates(damage);
+            m_player->decHitPoints(damage);
+            if (!m_player->isAlive())
+            {
+                m_player->setDead();
+            }
             return true;
         }
         return false;
@@ -147,6 +159,13 @@ public:
                 foodY = y;
             }
         }
+    }
+
+    int findSocrates(double bacX, double bacY, double& socX, double& socY)
+    {
+        socX = (m_player)->getX();
+        socY = (m_player)->getY();
+        return findEuclidean(bacX, bacY, socX, socY);
     }
 
     void createGoodies();

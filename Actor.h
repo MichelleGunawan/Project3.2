@@ -18,6 +18,9 @@ public:
 	bool isAlive();
 	void setDead();
 
+	virtual void playHurt() { return; }
+	virtual void playDead() { return; }
+
 	virtual bool isDamagable() { return false; }
 	virtual bool isLiveDamagable() { return false; }
 	virtual void decHitPoints(int damage) {}
@@ -25,7 +28,7 @@ public:
 	virtual bool blocksBacteria() const;
 	virtual bool isEdible() const;
 
-	virtual ~Actor() { delete sw; }
+	virtual ~Actor() { }
 
 private:
 	StudentWorld* sw;
@@ -178,6 +181,14 @@ class Bacteria : public Agent
 {
 public:
 	Bacteria(const int id, double startX, double startY, StudentWorld* swptr, int hp);
+
+	int getFood() { return m_food; }
+	void changeFood(int c) { m_food += c; }
+	void resetFood() { m_food = 0; }
+private:
+
+	int m_food;
+
 };
 
 class Salmonella : public Bacteria
@@ -188,13 +199,13 @@ public:
 	void changeMPD(int c) { mpd += c; }
 	void resetMPD() { mpd = 10; }
 
-	int getFood() { return m_food; }
-	void changeFood(int c) { m_food += c; }
-	void resetFood() { m_food = 0; }
+
+
+	virtual void playHurt();
+	virtual void playDead();
 	//virtual void doSomething();
 private:
 	int mpd;
-	int m_food;
 };
 
 class RegularSalmonella : public Salmonella
@@ -208,11 +219,17 @@ class AggressiveSalmonella : public Salmonella
 {
 public:
 	AggressiveSalmonella(double startX, double startY, StudentWorld* swptr);
+	void doSomething();
+private:
+	bool m_isBlocked;
 };
 
 class eColi :public Bacteria
 {
 public:
 	eColi(double startX, double startY, StudentWorld* swptr);
+	void doSomething();
+	virtual void playHurt();
+	virtual void playDead();
 };
 #endif // ACTOR_H_

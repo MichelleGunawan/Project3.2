@@ -1,6 +1,7 @@
 #include "Actor.h"
 #include "StudentWorld.h"
 #include<cmath>
+#include <math.h>
 using namespace std;
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
@@ -41,7 +42,10 @@ Pit::Pit(double startX, double startY, StudentWorld* swptr) : Actor(IID_PIT, sta
 }
 void Pit::doSomething()
 {
-
+    if (m_regSalmonella == 0 && m_aggSalmonella == 0 && m_eColi == 0)
+    {
+        setDead();
+    }
     if (randInt(1, 50) == 1)
     {
         int b = randInt(1, 3);
@@ -74,7 +78,7 @@ void Pit::doSomething()
             
         };
     }
-}
+   }
 
 
 
@@ -224,7 +228,6 @@ void Fungus::doSomething()
     else if (isAlive())
     {
         Socrates* s = getWorld()->getOverlappingSocrates(this);
-        s->setDead();
         if (s != nullptr)
         {
             getWorld()->increaseScore(-50);
@@ -344,15 +347,17 @@ void Socrates::doSomething()
 }
 
 Bacteria::Bacteria(const int id, double startX, double startY, StudentWorld* swptr, int hp):Agent(id, startX, startY, swptr, hp)
-{}
+{
+    m_food = 0;
+}
 
 
 Salmonella::Salmonella(const int id, double startX, double startY, StudentWorld* swptr, int hp) :Bacteria(id, startX, startY, swptr, hp)
 {
-    mpd = 0;
-    m_food = 0;
+    mpd = 0;   
 }
-
+void Salmonella::playHurt() { getWorld()->playSound(SOUND_SALMONELLA_HURT); }
+void Salmonella::playDead() { getWorld()->playSound(SOUND_SALMONELLA_DIE); }
 
 RegularSalmonella::RegularSalmonella(double startX, double startY, StudentWorld* swptr) :Salmonella(IID_SALMONELLA, startX, startY, swptr, 4)
 {}
@@ -366,7 +371,9 @@ void RegularSalmonella::doSomething()
     else if (isAlive())
     {
         if (getWorld()->bacteriaOverlapsSocrates(getX(), getY(), 1))
-        { }
+        { 
+            
+        }
         else if (getFood() == 3)
         {
             double newX, newY;
@@ -401,7 +408,7 @@ void RegularSalmonella::doSomething()
         changeMPD(-1);
         double threeX, threeY;
         getPositionInThisDirection(getDirection(), 3, threeX, threeY);
-        int r = getWorld()->findEuclidean(threeX, threeY, VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
+        double r = getWorld()->findEuclidean(threeX, threeY, VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
         if (r < VIEW_RADIUS && !(getWorld()->isBacteriumMovementBlockedAt(this,threeX, threeY)))
         {
             moveTo(threeX, threeY);
@@ -438,13 +445,193 @@ void RegularSalmonella::doSomething()
             resetMPD();
             return;
         }
-        
-    
     }
+
 }
 
 AggressiveSalmonella::AggressiveSalmonella(double startX, double startY, StudentWorld* swptr) :Salmonella(IID_SALMONELLA, startX, startY, swptr, 4)
+{
+    m_isBlocked = false;
+}
+
+void AggressiveSalmonella::doSomething()
+{
+    if (!isAlive())
+    {
+        return;
+    }
+    else if (isAlive())
+    {
+        double socX = 0;
+        double socY = 0;
+        double distFromSoc = getWorld()->findSocrates(getX(), getY(), socX, socY);
+        if (distFromSoc <= 72)
+        {
+            double angle = atan2(getX() - socX, getY() - socY);
+            double threeX, threeY;
+            getPositionInThisDirection(getDirection(), 3, threeX, threeY);
+            double r = getWorld()->findEuclidean(threeX, threeY, VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
+            if (r < VIEW_RADIUS)// && !(getWorld()->isBacteriumMovementBlockedAt(this, threeX,threeY)))
+            {
+                setDirection(angle);
+                moveTo(threeX, threeY);
+            }
+            if (getWorld()->isBacteriumMovementBlockedAt(this, getX(), getY()))
+            {
+                m_isBlocked = true;
+            }
+        }
+        
+        if (getWorld()->bacteriaOverlapsSocrates(getX(), getY(), 2))
+        {
+        }
+        else if (getFood() == 3)
+        {
+            double newX, newY;
+            if (getX() <= VIEW_WIDTH / 2)
+            {
+                newX = getX() + SPRITE_RADIUS;
+            }
+            else if (getX() > VIEW_WIDTH / 2)
+            {
+                newX = getX() - SPRITE_RADIUS;
+            }
+
+            if (getY() <= VIEW_WIDTH / 2)
+            {
+                newY = getY() + SPRITE_RADIUS;
+            }
+            else if (getY() > VIEW_WIDTH / 2)
+            {
+                newY = getY() - SPRITE_RADIUS;
+            }
+
+            getWorld()->addActor(new AggressiveSalmonella(newX, newY, getWorld()));
+            resetFood();
+        }
+        if (getWorld()->bacteriaOverlapsFood(getX(), getY()))
+        {
+            changeFood(1);
+        }
+    }
+    if (m_isBlocked == false)
+    {
+        if (getMPD() > 0)
+        {
+            changeMPD(-1);
+            double threeX, threeY;
+            getPositionInThisDirection(getDirection(), 3, threeX, threeY);
+            int r = getWorld()->findEuclidean(threeX, threeY, VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
+            if (r < VIEW_RADIUS && !(getWorld()->isBacteriumMovementBlockedAt(this, threeX, threeY)))
+            {
+                moveTo(threeX, threeY);
+            }
+            else
+            {
+                Direction rand = randInt(0, 359);
+                setDirection(rand);
+                resetMPD();
+                return;
+            }
+        }
+
+        else
+        {
+            double foodX;
+            double foodY;
+            getWorld()->findClosestFood(getX(), getY(), foodX, foodY);
+
+            double distFromFood = getWorld()->findEuclidean(getX(),getY(), foodX, foodY);
+            if (distFromFood <= 128)
+            {
+                double threeX, threeY;
+                double angle = atan2(getX() - foodX, getY() - foodY);
+                getPositionInThisDirection(angle, 3, threeX, threeY);
+                int r = getWorld()->findEuclidean(threeX, threeY, VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
+
+                if (r < VIEW_RADIUS && !(getWorld()->isBacteriumMovementBlockedAt(this, threeX, threeY)))
+                {
+                    setDirection(angle);
+                    moveTo(threeX, threeY);
+                }
+            }
+            
+            else
+            {
+                Direction rand = randInt(0, 359);
+                setDirection(rand);
+                resetMPD();
+                return;
+            }
+        }
+    }    
+}
+
+eColi::eColi(double startX, double startY, StudentWorld* swptr) : Bacteria(IID_ECOLI, startX, startY, swptr, 5)
 {}
 
-eColi::eColi(double startX, double startY, StudentWorld* swptr) : Bacteria(IID_ECOLI, startX, startY, swptr, 4)
-{}
+void eColi::doSomething()
+{
+    if (!isAlive())
+    {
+        return;
+    }
+    if (getWorld()->bacteriaOverlapsSocrates(getX(), getY(), 2))
+    {
+    }
+    else if(getFood() == 3)
+    {
+        double newX, newY;
+        if (getX() <= VIEW_WIDTH / 2)
+        {
+            newX = getX() + SPRITE_RADIUS;
+        }
+        else if (getX() > VIEW_WIDTH / 2)
+        {
+            newX = getX() - SPRITE_RADIUS;
+        }
+
+        if (getY() <= VIEW_WIDTH / 2)
+        {
+            newY = getY() + SPRITE_RADIUS;
+        }
+        else if (getY() > VIEW_WIDTH / 2)
+        {
+            newY = getY() - SPRITE_RADIUS;
+        }
+
+        getWorld()->addActor(new AggressiveSalmonella(newX, newY, getWorld()));
+        resetFood();
+    }
+    if (getWorld()->bacteriaOverlapsFood(getX(), getY()))
+    {
+        changeFood(1);
+    }
+
+    double socX = 0;
+    double socY = 0;
+    double distFromSoc = getWorld()->findSocrates(getX(), getY(), socX, socY);
+    
+    
+    double angle = atan2(getX() - socX, getY() - socY);
+    if (distFromSoc <= 256)
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            double x, y;
+            getPositionInThisDirection(angle, 3, x,y);
+            if (!(getWorld()->isBacteriumMovementBlockedAt(this, x,y)))
+            {
+                angle += 10;
+            }
+            else
+            {
+                setDirection(angle);
+                moveTo(x,y);
+            }
+        }
+    }
+}
+
+void eColi::playHurt() { getWorld()->playSound(SOUND_SALMONELLA_HURT); }
+void eColi::playDead() { getWorld()->playSound(SOUND_SALMONELLA_DIE); }

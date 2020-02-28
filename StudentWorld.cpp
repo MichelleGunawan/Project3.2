@@ -171,7 +171,7 @@ int StudentWorld::init()
         if (r <= 120 && checkAllowed(startX, startY))
         {
             actors.push_back(new Food(startX, startY, this));
-            coords.push_back(Coordinate(startX, startY));
+            //coords.push_back(Coordinate(startX, startY));
 
         }
         else
@@ -208,39 +208,11 @@ int StudentWorld::move()
 {
     // this code is here merely to allow the game to build, run, and terminate after you hit enter.
     // notice that the return value gwstatus_player_died will cause our framework to end the current level.
-
-    /*int chanceFungus = min(510 - getLevel() * 10, 200);
-    int rand = randInt(0, chanceFungus - 1);
-    int randAngle = randInt(0, 359);
-        if (rand == 0)
-        {
-            double x, y = 0;
-            m_player->getPositionInThisDirection(randAngle, VIEW_RADIUS, x, y);
-            actors.push_back(new Fungus(VIEW_WIDTH / 2 + x, VIEW_HEIGHT / 2 + y, this));
-        }
-     int chanceGoodie = min(510 - getLevel() * 10, 200);
-     int rand2 = randInt(0, chanceGoodie - 1);
-     int randAngle2 = randInt(0, 359);
-     if (rand2 == 0)
-     {
-         double x, y = 0;
-         m_player->getPositionInThisDirection(randAngle2, VIEW_RADIUS, x, y);
-         int typeGoodie = randInt(1, 10);
-         if (typeGoodie <= 6)
-         {
-             actors.push_back(new RestoreHealthGoodie(VIEW_WIDTH / 2 + x, VIEW_HEIGHT / 2 + y , this));
-         }
-         else if (typeGoodie > 6 && typeGoodie <= 9)
-         {
-             actors.push_back(new FlameThrowerGoodie(VIEW_WIDTH / 2 + x, VIEW_HEIGHT / 2 + y, this));
-         }
-         else if (typeGoodie == 10)
-         {
-             actors.push_back(new ExtraLifeGoodie(VIEW_WIDTH / 2 + x, VIEW_HEIGHT / 2 + y , this));
-         }
-     }*/
+    
+    
     if (m_player->isAlive())
     {
+        
         m_player->doSomething();
         list<Actor*>::iterator it = actors.begin();
         for (; it != actors.end();)
@@ -252,18 +224,19 @@ int StudentWorld::move()
             }
             else if (!(*it)->isAlive())
             {
-                //delete (*it);
+                delete (*it);
                 it = actors.erase(it);
             }
         }
+        createGoodies();
     }
     else if (!m_player->isAlive())
     {
         return GWSTATUS_PLAYER_DIED;
     }
 
-    string stats = "score: " + to_string(getScore()) + " level: " + to_string(getLevel()) + " lives: " + to_string(getLives()) + " health: " + to_string(m_player->getHitPoints()) + " sprays: " + to_string(m_player->getSprays()) + " flames: " + to_string(m_player->getFlames()); // +" size: " + to_string(actors.size());
-    setGameStatText(stats);
+    //string stats = "score: " + to_string(getScore()) + " level: " + to_string(getLevel()) + " lives: " + to_string(getLives()) + " health: " + to_string(m_player->getHitPoints()) + " sprays: " + to_string(m_player->getSprays()) + " flames: " + to_string(m_player->getFlames()); // +" size: " + to_string(actors.size());
+    //setGameStatText(stats);
     return 1;
 }
 
@@ -281,4 +254,47 @@ void StudentWorld::cleanUp()
 StudentWorld::~StudentWorld()
 {
     cleanUp();
+}
+
+void StudentWorld::createGoodies()
+{
+    int chanceFungus = min(510 - getLevel() * 10, 200);
+    int rand = randInt(0, chanceFungus - 1);
+    int randAngle = randInt(0, 359);
+    if (rand == 0)
+    {
+        double x, y = 0;
+        x = VIEW_RADIUS * cos(randAngle) + VIEW_WIDTH / 2;
+        y = VIEW_RADIUS * sin(randAngle) + VIEW_WIDTH / 2;
+        actors.push_back(new Fungus( x, y, this));
+        return;
+    }
+    else
+    {
+        int chanceGoodie = min(510 - getLevel() * 10, 200);
+        int rand2 = randInt(0, chanceGoodie - 1);
+        int randAngle2 = randInt(0, 359);
+        if (rand2 == 0)
+        {
+            double x, y = 0;
+            x = VIEW_RADIUS * cos(randAngle2) + VIEW_WIDTH / 2;
+            y = VIEW_RADIUS * sin(randAngle2) + VIEW_WIDTH / 2;
+            int typeGoodie = randInt(1, 10);
+            if (typeGoodie <= 6)
+            {
+                actors.push_back(new RestoreHealthGoodie(x, y, this));
+                return;
+            }
+            else if (typeGoodie > 6 && typeGoodie <= 9)
+            {
+                actors.push_back(new FlameThrowerGoodie(x, y, this));
+                return;
+            }
+            else if (typeGoodie == 10)
+            {
+                actors.push_back(new ExtraLifeGoodie(x, y, this));
+                return;
+            }
+        }
+    }
 }
