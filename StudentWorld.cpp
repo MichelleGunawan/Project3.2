@@ -56,33 +56,32 @@ bool StudentWorld::checkAllowed(int startX, int startY)
 
 
 
-
+//adds an actor pointer to our list and an actor to the game
 void StudentWorld::addActor(Actor* a)
 {
     actors.push_back(a);
 }
 
-bool StudentWorld::damageOneActor(Actor* a, int damage)
-{
-    return a->takeDamage(damage);
-}
-
-
-// Is bacterium a blocked from moving to the indicated location?
-bool StudentWorld::isBacteriumMovementBlockedAt(Actor* a, double x, double y) const
+//checks that the actor is always in the petri dish
+bool StudentWorld::inBound(double x, double y)
 {
     int r = findEuclidean(x, y, VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
     if (r > VIEW_RADIUS)
     {
         return true;
     }
+}
+
+//checks if bacteria is currently blocked
+bool StudentWorld::isBacteriumMovementBlockedAt(double x, double y) const
+{
     list<Actor*>::const_iterator it = actors.begin();
     for (; it != actors.end(); it++)
     {
         if ((*it)->blocksBacteria())
         {
-            int actorX = (*it)->getX(), actorY = (*it)->getY();       //DOES NOT GET CORRECT X AND Y
-            if (findEuclidean(actorX, actorY, x, y) <= SPRITE_RADIUS)   //NEVER GOES IN
+            int actorX = (*it)->getX(), actorY = (*it)->getY();       
+            if (findEuclidean(actorX, actorY, x, y) <= SPRITE_RADIUS)   
             {
                 return true;
             }
@@ -235,8 +234,7 @@ int StudentWorld::move()
         return GWSTATUS_PLAYER_DIED;
     }
 
-    //string stats = "score: " + to_string(getScore()) + " level: " + to_string(getLevel()) + " lives: " + to_string(getLives()) + " health: " + to_string(m_player->getHitPoints()) + " sprays: " + to_string(m_player->getSprays()) + " flames: " + to_string(m_player->getFlames()); // +" size: " + to_string(actors.size());
-    //setGameStatText(stats);
+    statsText();
     return 1;
 }
 
@@ -297,4 +295,21 @@ void StudentWorld::createGoodies()
             }
         }
     }
+}
+void StudentWorld::statsText()
+{
+    ostringstream gameText;
+    gameText.fill('0');
+    int score = getScore();
+    if (score >= 0)
+    {
+        gameText << "Score: " << setw(6)<<score;
+    }
+    else if (score < 0)
+    {
+        gameText << "Score: -" << setw(6) << -1*score;
+    }
+    string stat = gameText.str() + " level: " + to_string(getLevel()) + " lives: " + to_string(getLives()) + " health: " + to_string(m_player->getHitPoints()) + " sprays: " + to_string(m_player->getSprays()) + " flames: " + to_string(m_player->getFlames()); // +" size: " + to_string(actors.size());
+
+    setGameStatText(stat);
 }

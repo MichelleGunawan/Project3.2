@@ -24,7 +24,6 @@ public:
 	virtual bool isDamagable() { return false; }
 	virtual bool isLiveDamagable() { return false; }
 	virtual void decHitPoints(int damage) {}
-	virtual bool takeDamage(int damage);
 	virtual bool blocksBacteria() const;
 	virtual bool isEdible() const;
 
@@ -42,7 +41,6 @@ public:
 	Dirt(double startX, double startY, StudentWorld* swptr);
 	//virtual void doSomething();
 	virtual bool isDamagable() { return true; }
-	virtual bool takeDamage(int) { setDead(); return true; }
 	virtual bool blocksBacteria() const {return true;}
 };
 
@@ -98,7 +96,6 @@ class Goodie : public Actor
 public:
 	Goodie(const int imageID, double x, double y, StudentWorld* swptr);
 	virtual bool isDamagable() { return true; }
-	virtual bool takeDamage(int) { setDead(); return true; }
 	void doSomething();
 
 	// Have s pick up this goodie.
@@ -148,9 +145,7 @@ public:
 	virtual bool isAlive() { return m_hp > 0; }
 	virtual bool isDamagable() { return true; }
 	virtual bool isLiveDamagable() { return true; }
-	void decHitPoints(int damage) { m_hp -= damage; }
-	virtual bool takeDamage(int damage); 
-	//void doSomething();
+	void decHitPoints(int damage) { m_hp -= damage; if (m_hp <= 0) { setDead(); } }
 
 
 	int getHitPoints() const;
@@ -222,6 +217,7 @@ public:
 	void doSomething();
 private:
 	bool m_isBlocked;
+	bool doSix;
 };
 
 class eColi :public Bacteria

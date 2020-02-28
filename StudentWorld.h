@@ -21,6 +21,7 @@ public:
     virtual ~StudentWorld();
     double findEuclidean(double startX, double startY, double endX, double endY) const;
     bool checkAllowed(int startX, int startY);
+    bool inBound(double x, double y);
 
     // Add an actor to the world.
     void addActor(Actor* a);
@@ -30,7 +31,7 @@ public:
     bool damageOneActor(Actor* a, int damage);
 
     // Is bacterium a blocked from moving to the indicated location?
-    bool isBacteriumMovementBlockedAt(Actor* a, double x, double y) const;
+    bool isBacteriumMovementBlockedAt(double x, double y) const;
 
     // If actor a overlaps this world's socrates, return a pointer to the
     // socrates; otherwise, return nullptr
@@ -55,23 +56,6 @@ public:
     // where socrates and goodies are placed.)
     void getPositionOnCircumference(int angle, double& x, double& y) const;
 
-    /*Actor* overlapsProjectile(double projX, double projY)
-    {
-        std::list<Actor*>::iterator it = actors.begin();
-        for(;it != actors.end();it++)
-        {
-            double x = (*it)->getX();
-            double y = (*it)->getY();
-            if ((*it)->takeDamage(0))
-            {
-                if (findEuclidean(projX, projY, x, y) <= SPRITE_RADIUS * 2)
-                {
-                    return *it;
-                }
-            }
-        }
-        return nullptr;
-    }*/
 
     bool overlapsProjectile(double projX, double projY, int damage)
     {
@@ -93,8 +77,8 @@ public:
                        }
                         else
                         {
-                            (*it)->setDead();
-                            (*it)->playDead();
+                           (*it)->playDead();
+                           (*it)->setDead();
                         }
                     }
                     else
@@ -143,32 +127,34 @@ public:
         return false;
     }
 
-    void findClosestFood(double bacX, double bacY, double& foodX, double& foodY)
+    bool findClosestFood(double bacX, double bacY, double& foodX, double& foodY,double dist)
     {
-        double max = 0.0;
+        double min = 0.0;
         std::list<Actor*>::iterator it = actors.begin();
         for (; it != actors.end(); it++)
         {
             double x = (*it)->getX();
             double y = (*it)->getY();
             double current = (findEuclidean(x, y, bacX, bacY));
-            if (current > max)
+            if (current < min)
             {
-                max = current;
+                min = current;
                 foodX = x;
                 foodY = y;
             }
         }
+        return min <= dist;
     }
 
-    int findSocrates(double bacX, double bacY, double& socX, double& socY)
+    bool findSocrates(double bacX, double bacY, double& socX, double& socY, double dist)
     {
         socX = (m_player)->getX();
         socY = (m_player)->getY();
-        return findEuclidean(bacX, bacY, socX, socY);
+        return (findEuclidean(bacX, bacY, socX, socY)<=dist);
     }
 
     void createGoodies();
+    void statsText();
 
 private:
     Socrates* m_player;
