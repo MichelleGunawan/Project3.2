@@ -37,121 +37,23 @@ public:
     // socrates; otherwise, return nullptr
     Socrates* getOverlappingSocrates(Actor* a) const;
 
-    // If actor a overlaps a living edible object, return a pointer to the
-    // edible object; otherwise, return nullptr
-    Actor* getOverlappingEdible(Actor* a) const;
 
     // Return true if this world's socrates is within the indicated distance
     // of actor a; otherwise false.  If true, angle will be set to the
     // direction from actor a to the socrates.
     bool getAngleToNearbySocrates(Actor* a, int dist, int& angle) const;
 
-    // Return true if there is a living edible object within the indicated
-    // distance from actor a; otherwise false.  If true, angle will be set
-    // to the direction from actor a to the edible object nearest to it.
-    bool getAngleToNearestNearbyEdible(Actor* a, int dist, int& angle) const;
-    
-    // Set x and y to the position on the circumference of the Petri dish
-    // at the indicated angle from the center.  (The circumference is
-    // where socrates and goodies are placed.)
-    void getPositionOnCircumference(int angle, double& x, double& y) const;
+    bool pitExists(int i);
 
+    bool overlapsProjectile(double projX, double projY, int damage);
 
-    bool overlapsProjectile(double projX, double projY, int damage)
-    {
-        std::list<Actor*>::iterator it = actors.begin();
-        for (; it != actors.end(); it++)
-        {
-            double x = (*it)->getX();
-            double y = (*it)->getY();
-            if ((*it)->isDamagable())
-            {
-                if (findEuclidean(x, y, projX, projY) <= (2 * SPRITE_RADIUS))
-                {
-                    if ((*it)->isLiveDamagable())
-                    {
-                       (*it)->decHitPoints(damage);
-                       if ((*it)->isAlive())
-                       {
-                           (*it)->playHurt();
-                       }
-                        else
-                        {
-                           (*it)->playDead();
-                           (*it)->setDead();
-                        }
-                    }
-                    else
-                    {
-                        (*it)->setDead();
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    bool bacteriaOverlapsSocrates(double actorX, double actorY, int damage);
 
-    bool bacteriaOverlapsSocrates(double actorX, double actorY, int damage)
-    {
-        double socX = (m_player)->getX();
-        double socY = (m_player)->getY();
-        if (findEuclidean(actorX, actorY, socX, socY) <= (2 * SPRITE_RADIUS))
-        {
-            m_player->decHitPoints(damage);
-            if (!m_player->isAlive())
-            {
-                m_player->setDead();
-            }
-            return true;
-        }
-        return false;
-    }
+    bool bacteriaOverlapsFood(double bacX, double bacY);
 
-    bool bacteriaOverlapsFood(double bacX, double bacY)
-    {
-        std::list<Actor*>::iterator it = actors.begin();
-        for (; it != actors.end(); it++)
-        {
-            double x = (*it)->getX();
-            double y = (*it)->getY();
-            if ((*it)->isEdible())
-            {
-                if (findEuclidean(x, y, bacX, bacY) <= (2 * SPRITE_RADIUS))
-                {
-                    (*it)->setDead();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    bool findClosestFood(double bacX, double bacY, double& foodX, double& foodY, double dist);
 
-    bool findClosestFood(double bacX, double bacY, double& foodX, double& foodY,double dist)
-    {
-        double min = 0.0;
-        std::list<Actor*>::iterator it = actors.begin();
-        for (; it != actors.end(); it++)
-        {
-            double x = (*it)->getX();
-            double y = (*it)->getY();
-            double current = (findEuclidean(x, y, bacX, bacY));
-            if (current < min)
-            {
-                min = current;
-                foodX = x;
-                foodY = y;
-            }
-        }
-        return min <= dist;
-    }
-
-    bool findSocrates(double bacX, double bacY, double& socX, double& socY, double dist)
-    {
-        socX = (m_player)->getX();
-        socY = (m_player)->getY();
-        return (findEuclidean(bacX, bacY, socX, socY)<=dist);
-    }
+    bool findSocrates(double bacX, double bacY, double& socX, double& socY, double dist);
 
     void createGoodies();
     void statsText();
@@ -166,6 +68,7 @@ private:
         Coordinate(double X, double Y) :x(X), y(Y) {}
     };
     std::vector<Coordinate> coords;
+    bool pit;
 };
 
 

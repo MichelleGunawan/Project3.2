@@ -1,24 +1,12 @@
-﻿  Actor.cpp
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(263,17): warning C4244: 'initializing': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(425,40): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(430,30): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(464,19): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(468,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(536,44): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(541,34): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\Actor.cpp(600,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  StudentWorld.cpp
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(39,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(47,19): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(68,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(83,24): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(83,48): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(112,19): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(113,19): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(128,22): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(151,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(169,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(189,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  Generating Code...
-C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(73): warning C4715: 'StudentWorld::inBound': not all control paths return a value
+﻿  StudentWorld.cpp
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(52,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(60,19): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(81,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(96,24): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(96,48): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(124,22): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(147,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(166,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(186,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\miche\Downloads\Kontagion2\Kontagion\Kontagion\StudentWorld.cpp(86): warning C4715: 'StudentWorld::inBound': not all control paths return a value
   Kontagion.vcxproj -> C:\Users\miche\Downloads\Kontagion2\Kontagion\Debug\Kontagion.exe

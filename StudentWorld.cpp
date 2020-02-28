@@ -33,6 +33,19 @@ double StudentWorld::findEuclidean(double startX, double startY, double endX, do
     return sqrt(((endX - startX) * (endX - startX)) + ((endY - startY) * (endY - startY)));
 }
 
+bool StudentWorld::pitExists(int i)
+{
+    if (i == 0)
+    {
+        pit = false;
+    }
+    if (i == 1)
+    {
+        pit = true;
+    }
+    return pit;
+}
+
 bool StudentWorld::checkAllowed(int startX, int startY)
 {
     bool allowed = true;
@@ -80,8 +93,8 @@ bool StudentWorld::isBacteriumMovementBlockedAt(double x, double y) const
     {
         if ((*it)->blocksBacteria())
         {
-            int actorX = (*it)->getX(), actorY = (*it)->getY();       
-            if (findEuclidean(actorX, actorY, x, y) <= SPRITE_RADIUS)   
+            int actorX = (*it)->getX(), actorY = (*it)->getY();
+            if (findEuclidean(actorX, actorY, x, y) <= SPRITE_RADIUS)
             {
                 return true;
             }
@@ -102,23 +115,6 @@ Socrates* StudentWorld::getOverlappingSocrates(Actor* a) const
     return nullptr;
 }
 
-Actor* StudentWorld::getOverlappingEdible(Actor* a) const
-{
-    list<Actor*>::const_iterator it = actors.begin();
-    for (; it != actors.end(); it++)
-    {
-        if ((*it)->isEdible())
-        {
-            int x = (*it)->getX();
-            int y = (*it)->getY();
-            if (findEuclidean(x, y, a->getX(), a->getY()) <= (2 * SPRITE_RADIUS))
-            {
-                return *it;
-            }
-        }
-    }
-    return nullptr;
-}
 
 bool StudentWorld::getAngleToNearbySocrates(Actor* a, int dist, int& angle) const
 {
@@ -153,6 +149,7 @@ int StudentWorld::init()
         {
             actors.push_back(new Pit(startX, startY, this));
             coords.push_back(Coordinate(startX, startY));
+            pitExists(1);
         }
         else
         {
@@ -203,56 +200,110 @@ int StudentWorld::init()
     return GWSTATUS_CONTINUE_GAME;
 }
 
-int StudentWorld::move()
+bool StudentWorld::overlapsProjectile(double projX, double projY, int damage)
 {
-    // this code is here merely to allow the game to build, run, and terminate after you hit enter.
-    // notice that the return value gwstatus_player_died will cause our framework to end the current level.
-    
-    
-    if (m_player->isAlive())
+    std::list<Actor*>::iterator it = actors.begin();
+    for (; it != actors.end(); it++)
     {
-        
-        m_player->doSomething();
-        list<Actor*>::iterator it = actors.begin();
-        for (; it != actors.end();)
+        double x = (*it)->getX();
+        double y = (*it)->getY();
+        if ((*it)->isDamagable())
         {
-            if ((*it)->isAlive())
+            if (findEuclidean(x, y, projX, projY) <= (2 * SPRITE_RADIUS))
             {
-                (*it)->doSomething();
-                it++;
-            }
-            else if (!(*it)->isAlive())
-            {
-                delete (*it);
-                it = actors.erase(it);
+                if ((*it)->isLiveDamagable())
+                {
+                    (*it)->decHitPoints(damage);
+                    if ((*it)->isAlive())
+                    {
+                        (*it)->playHurt();
+                    }
+                    else
+                    {
+                        (*it)->playDead();
+                        (*it)->setDead();
+                    }
+                }
+                else
+                {
+                    (*it)->setDead();
+                }
+                return true;
             }
         }
-        createGoodies();
     }
-    else if (!m_player->isAlive())
-    {
-        return GWSTATUS_PLAYER_DIED;
-    }
-
-    statsText();
-    return 1;
+    return false;
 }
 
-void StudentWorld::cleanUp()
+
+bool StudentWorld::bacteriaOverlapsSocrates(double actorX, double actorY, int damage)
 {
-    delete m_player;
-    list<Actor*>::iterator it = actors.begin();
-    for (; it != actors.end();)
+    double socX = (m_player)->getX();
+    double socY = (m_player)->getY();
+    if (findEuclidean(actorX, actorY, socX, socY) <= (2 * SPRITE_RADIUS))
     {
-        delete* it;
-        it = actors.erase(it);
+        m_player->decHitPoints(damage);
+        if (!m_player->isAlive())
+        {
+            m_player->setDead();
+        }
+        return true;
     }
+    return false;
 }
 
-StudentWorld::~StudentWorld()
+bool StudentWorld:: bacteriaOverlapsFood(double bacX, double bacY)
 {
-    cleanUp();
+    std::list<Actor*>::iterator it = actors.begin();
+    for (; it != actors.end(); it++)
+    {
+        double x = (*it)->getX();
+        double y = (*it)->getY();
+        if ((*it)->isEdible())
+        {
+            if (findEuclidean(x, y, bacX, bacY) <= (2 * SPRITE_RADIUS))
+            {
+                (*it)->setDead();
+                return true;
+            }
+        }
+    }
+    return false;
 }
+
+bool StudentWorld::findClosestFood(double bacX, double bacY, double& foodX, double& foodY, double dist)
+{
+    double min = 0.0;
+    std::list<Actor*>::iterator it = actors.begin();
+    for (; it != actors.end(); it++)
+    {
+        double x = (*it)->getX();
+        double y = (*it)->getY();
+        double current = (findEuclidean(x, y, bacX, bacY));
+        if (current < min)
+        {
+            min = current;
+            foodX = x;
+            foodY = y;
+        }
+    }
+    return min <= dist;
+}
+
+bool StudentWorld::findSocrates(double bacX, double bacY, double& socX, double& socY, double dist)
+{
+    socX = (m_player)->getX();
+    socY = (m_player)->getY();
+    return (findEuclidean(bacX, bacY, socX, socY) <= dist);
+}
+
+
+
+
+
+
+
+
 
 void StudentWorld::createGoodies()
 {
@@ -264,7 +315,7 @@ void StudentWorld::createGoodies()
         double x, y = 0;
         x = VIEW_RADIUS * cos(randAngle) + VIEW_WIDTH / 2;
         y = VIEW_RADIUS * sin(randAngle) + VIEW_WIDTH / 2;
-        actors.push_back(new Fungus( x, y, this));
+        actors.push_back(new Fungus(x, y, this));
         return;
     }
     else
@@ -303,13 +354,82 @@ void StudentWorld::statsText()
     int score = getScore();
     if (score >= 0)
     {
-        gameText << "Score: " << setw(6)<<score;
+        gameText << "Score: " << setw(6) << score;
     }
     else if (score < 0)
     {
-        gameText << "Score: -" << setw(6) << -1*score;
+        gameText << "Score: -" << setw(6) << -1 * score;
     }
     string stat = gameText.str() + " level: " + to_string(getLevel()) + " lives: " + to_string(getLives()) + " health: " + to_string(m_player->getHitPoints()) + " sprays: " + to_string(m_player->getSprays()) + " flames: " + to_string(m_player->getFlames()); // +" size: " + to_string(actors.size());
 
     setGameStatText(stat);
+}
+
+int StudentWorld::move()
+{
+    // this code is here merely to allow the game to build, run, and terminate after you hit enter.
+    // notice that the return value gwstatus_player_died will cause our framework to end the current level.
+
+    bool nextLevel = true;
+
+    if (m_player->isAlive())
+    {
+        m_player->doSomething();
+        list<Actor*>::iterator it = actors.begin();
+        for (; it != actors.end();)
+        {
+            if ((*it)->isAlive())
+            {
+                (*it)->doSomething();
+                it++;
+            }
+            else if (!(*it)->isAlive())
+            {
+                delete (*it);
+                it = actors.erase(it);
+            }
+        }
+        createGoodies();
+
+        list<Actor*>::iterator it2 = actors.begin();
+        while (it2 != actors.end())
+        {
+            if ((*it2)->isAlive())
+            {
+                if ((*it2)->isLiveDamagable()|| pit==true)
+                {
+                    nextLevel = false;
+                }
+            }
+            it2++;
+        }
+        if (nextLevel)
+        {
+            return GWSTATUS_FINISHED_LEVEL;
+        }
+    }
+    else if (!m_player->isAlive())
+    {
+        decLives();
+        return GWSTATUS_PLAYER_DIED;
+    }
+
+    statsText();
+    return 1;
+}
+
+void StudentWorld::cleanUp()
+{
+    delete m_player;
+    list<Actor*>::iterator it = actors.begin();
+    for (; it != actors.end();)
+    {
+        delete* it;
+        it = actors.erase(it);
+    }
+}
+
+StudentWorld::~StudentWorld()
+{
+    cleanUp();
 }

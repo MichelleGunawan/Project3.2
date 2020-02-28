@@ -44,6 +44,7 @@ void Pit::doSomething()
     if (m_regSalmonella == 0 && m_aggSalmonella == 0 && m_eColi == 0)
     {
         setDead();
+        getWorld()->pitExists(0);
     }
     if (randInt(1, 50) == 1)
     {
@@ -212,7 +213,7 @@ void ExtraLifeGoodie::doSomething()
             getWorld()->increaseScore(300);
             setDead();
             getWorld()->playSound(SOUND_GOT_GOODIE);
-            s->restoreFlame();
+            getWorld()->incLives();
             return;
         }
     }
@@ -248,7 +249,19 @@ Agent::Agent(const int id, double startX, double startY, StudentWorld* swptr, in
 
 int Agent::getHitPoints() const { return m_hp; }
 
-
+void Agent::decHitPoints(int damage)
+{
+    m_hp -= damage;
+    if (m_hp <= 0)
+    {
+        int rand = randInt(0, 1);
+        if (rand == 1)
+        {
+            getWorld()->addActor(new Food(getX(), getY(), getWorld()));
+        }
+        setDead();
+    }
+}
 
 
 Socrates::Socrates(double startX, double startY, StudentWorld* swptr) :Agent(IID_PLAYER, startX, startY, swptr, 100)
@@ -363,38 +376,38 @@ void RegularSalmonella::doSomething()
         return;
     }
 
-        if (getWorld()->bacteriaOverlapsSocrates(getX(), getY(), 1))
-        { 
-            
-        }
-        else if (getFood() == 3)
+    if (getWorld()->bacteriaOverlapsSocrates(getX(), getY(), 1))
+    { 
+     
+    }
+    else if (getFood() == 3)
+    {
+        double newX, newY;
+        if (getX() <= VIEW_WIDTH / 2)
         {
-            double newX, newY;
-            if (getX() <= VIEW_WIDTH / 2)
-            {
-                newX = getX() + SPRITE_RADIUS;
-            }
-            else if (getX() > VIEW_WIDTH / 2)
-            {
-                newX = getX() - SPRITE_RADIUS;
-            }
-
-            if (getY() <= VIEW_WIDTH / 2)
-            {
-                newY = getY() + SPRITE_RADIUS;
-            }
-            else if (getY() > VIEW_WIDTH / 2)
-            {
-                newY = getY() - SPRITE_RADIUS;
-            }
-
-            getWorld()->addActor(new RegularSalmonella(newX, newY, getWorld()));
-            resetFood();
+            newX = getX() + SPRITE_RADIUS;
         }
-        else if (getWorld()->bacteriaOverlapsFood(getX(),getY()))
+        else if (getX() > VIEW_WIDTH / 2)
         {
-            changeFood(1);
+            newX = getX() - SPRITE_RADIUS;
         }
+        if (getY() <= VIEW_WIDTH / 2)
+        {
+            newY = getY() + SPRITE_RADIUS;
+        }
+        else if (getY() > VIEW_WIDTH / 2)
+        {
+            newY = getY() - SPRITE_RADIUS;
+        }
+
+        getWorld()->addActor(new RegularSalmonella(newX, newY, getWorld()));
+        resetFood();
+    }
+    else if (getWorld()->bacteriaOverlapsFood(getX(),getY()))
+    {
+        changeFood(1);
+    }
+    
     if (getMPD() > 0)
     {
         changeMPD(-1);
@@ -433,14 +446,14 @@ void RegularSalmonella::doSomething()
             }
 
         }
-            Direction rand = randInt(0, 359);
-            setDirection(rand);
-            resetMPD();
+        Direction rand = randInt(0, 359);
+        setDirection(rand);
+        resetMPD();
     }
 
 }
 
-AggressiveSalmonella::AggressiveSalmonella(double startX, double startY, StudentWorld* swptr) :Salmonella(IID_FOOD, startX, startY, swptr, 4)
+AggressiveSalmonella::AggressiveSalmonella(double startX, double startY, StudentWorld* swptr) :Salmonella(IID_SALMONELLA, startX, startY, swptr, 4)
 {
     m_isBlocked = false;
     doSix = true;
@@ -471,6 +484,8 @@ void AggressiveSalmonella::doSomething()
             moveTo(threeX,threeY);
         }
     }
+    else
+    {
         if (getWorld()->bacteriaOverlapsSocrates(getX(), getY(), 2))
         {
 
@@ -504,50 +519,51 @@ void AggressiveSalmonella::doSomething()
             changeFood(1);
         }
     
-    if (doSix == true)
-    {
-        if (getMPD() > 0)
+        if (doSix == true)
         {
-            changeMPD(-1);
-            double threeX, threeY;
-            getPositionInThisDirection(getDirection(), 3, threeX, threeY);
-            double r = getWorld()->findEuclidean(threeX, threeY, VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
-            if (r < VIEW_RADIUS && !(getWorld()->isBacteriumMovementBlockedAt(threeX, threeY)))
+            if (getMPD() > 0)
             {
-                moveTo(threeX, threeY);
+                changeMPD(-1);
+                double threeX, threeY;
+                getPositionInThisDirection(getDirection(), 3, threeX, threeY);
+                double r = getWorld()->findEuclidean(threeX, threeY, VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
+                if (r < VIEW_RADIUS && !(getWorld()->isBacteriumMovementBlockedAt(threeX, threeY)))
+                {
+                    moveTo(threeX, threeY);
+                }
+                else
+                {
+                    Direction rand = randInt(0, 359);
+                    setDirection(rand);
+                    resetMPD();
+                    return;
+                }
             }
+
             else
             {
+                double foodX;
+                double foodY;
+                if (getWorld()->findClosestFood(getX(), getY(), foodX, foodY, 128))
+                {
+                    double threeX, threeY;
+                    double angle = atan2(getY() - foodY, getX() - foodX) * (180 / 3.14);
+                    getPositionInThisDirection(angle, 3, threeX, threeY);
+
+                    double r = getWorld()->findEuclidean(threeX, threeY, VIEW_WIDTH / 2, VIEW_WIDTH / 2);
+                    if (r < VIEW_RADIUS && !(getWorld()->isBacteriumMovementBlockedAt(threeX, threeY)))
+                    {
+                        setDirection(angle);
+                        moveTo(threeX, threeY);
+                        return;
+                    }
+
+                }
                 Direction rand = randInt(0, 359);
                 setDirection(rand);
                 resetMPD();
                 return;
             }
-        }
-
-        else
-        {
-            double foodX;
-            double foodY;
-            if (getWorld()->findClosestFood(getX(), getY(), foodX, foodY, 128))
-            {
-                double threeX, threeY;
-                double angle = atan2(getY() - foodY, getX() - foodX) * (180 / 3.14);
-                getPositionInThisDirection(angle, 3, threeX, threeY);
-
-                double r = getWorld()->findEuclidean(threeX, threeY, VIEW_WIDTH / 2, VIEW_WIDTH / 2);
-                if (r < VIEW_RADIUS && !(getWorld()->isBacteriumMovementBlockedAt(threeX, threeY)))
-                {
-                    setDirection(angle);
-                    moveTo(threeX, threeY);
-                    return;
-                }
-
-            }
-            Direction rand = randInt(0, 359);
-            setDirection(rand);
-            resetMPD();
-            return;
         }
     }
 }

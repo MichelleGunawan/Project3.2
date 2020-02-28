@@ -145,8 +145,7 @@ public:
 	virtual bool isAlive() { return m_hp > 0; }
 	virtual bool isDamagable() { return true; }
 	virtual bool isLiveDamagable() { return true; }
-	void decHitPoints(int damage) { m_hp -= damage; if (m_hp <= 0) { setDead(); } }
-
+	void decHitPoints(int damage);
 
 	int getHitPoints() const;
 	void restoreHealth() { m_hp = 100; }
